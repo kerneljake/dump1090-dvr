@@ -1,3 +1,6 @@
+// put your google maps api key in config.js
+jQuery.getScript("https://maps.googleapis.com/maps/api/js?libraries=geometry&key=" + google_maps_api_key);
+
 // Define our global variables
 var GoogleMap     = null;
 var Planes        = {};
