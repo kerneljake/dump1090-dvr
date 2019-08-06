@@ -59,6 +59,7 @@
     #include <sys/ioctl.h>
     #include "rtl-sdr.h"
     #include "anet.h"
+    #include "hiredis/hiredis.h"
 #else
     #include "winstubs.h" //Put everything Windows specific in here
     #include "rtl-sdr.h"
@@ -180,6 +181,10 @@
 
 #ifndef HTMLPATH
 #define HTMLPATH   "./public_html"      // default path for gmap.html etc
+#endif
+
+#ifndef STREAM_NAME
+#define STREAM_NAME   "adsb:stream"    // default key for Redis stream
 #endif
 
 #define MODES_NOTUSED(V) ((void) V)
@@ -328,6 +333,7 @@ struct {                             // Internal state
     struct aircraft *aircrafts;
     uint64_t         interactive_last_update; // Last screen update in milliseconds
     time_t           last_cleanup_time;       // Last cleanup time in seconds
+    redisContext     *redis_context;
 
     // DF List mode
     int             bEnableDFLogging; // Set to enable DF Logging
@@ -446,6 +452,8 @@ void modesInitErrorInfo ();
 struct aircraft* interactiveReceiveData(struct modesMessage *mm);
 void  interactiveShowData(void);
 void  interactiveRemoveStaleAircrafts(void);
+void  interactiveUpdateRedis(void);
+void  redisInit(void);
 int   decodeBinMessage   (struct client *c, char *p);
 struct aircraft *interactiveFindAircraft(uint32_t addr);
 struct stDF     *interactiveFindDF      (uint32_t addr);
@@ -458,6 +466,7 @@ void modesReadFromClients (void);
 void modesSendAllClients  (int service, void *msg, int len);
 void modesQueueOutput     (struct modesMessage *mm);
 void modesReadFromClient(struct client *c, char *sep, int(*handler)(struct client *, char *));
+char *aircraftsToJson(int *len);
 
 #ifdef __cplusplus
 }

@@ -578,6 +578,7 @@ void backgroundTasks(void) {
 
     // If Modes.aircrafts is not NULL, remove any stale aircraft
     if (Modes.aircrafts) {
+        interactiveUpdateRedis();
         interactiveRemoveStaleAircrafts();
     }
 
@@ -799,6 +800,7 @@ int main(int argc, char **argv) {
 
     // Initialization
     modesInit();
+    redisInit();
 
     if (Modes.net_only) {
         fprintf(stderr,"Net-only mode, no RTL device or file open.\n");
@@ -895,6 +897,8 @@ int main(int argc, char **argv) {
     pthread_join(Modes.reader_thread,NULL);     // Wait on reader thread exit
 #ifndef _WIN32
     pthread_exit(0);
+    if (Modes.redis_context)
+	redisFree(Modes.redis_context);
 #else
     return (0);
 #endif

@@ -752,13 +752,40 @@ int handleHTTPRequest(struct client *c, char *p) {
         snprintf(getFile, sizeof getFile, "%s/%s", HTMLPATH, url);
     }
 
-    // Select the content to send, we have just two so far:
+    // Select the content to send:
     // "/" -> Our google map application.
     // "/data.json" -> Our ajax request to update planes.
+    // "/second.json/timestamp" -> ajax request for a point in time.
     if (strstr(url, "/data.json")) {
         statuscode = 200;
         content = aircraftsToJson(&clen);
         //snprintf(ctype, sizeof ctype, MODES_CONTENT_TYPE_JSON);
+    } else if (strstr(url, "/second.json/")) {
+	redisContext *context = Modes.redis_context;
+	redisReply *reply = NULL;
+	char *p;
+	int timestamp;
+
+	p = strrchr(url, '/');
+	timestamp = atoi(++p);
+	statuscode = 500;
+	if (context) {
+	    reply = redisCommand(context, "XRANGE %s %d %d COUNT 1", STREAM_NAME, timestamp, timestamp);
+	    if (reply) {
+		if ((REDIS_REPLY_ARRAY == reply->type) && (reply->elements > 0) && 
+		    (reply->element[0]->elements > 1) && (reply->element[0]->element[1]->elements > 1)) {
+		    content = strdup(reply->element[0]->element[1]->element[1]->str);
+		    statuscode = 200;
+		} else {
+		    statuscode = 404;
+		}
+		freeReplyObject(reply);
+	    }
+	}
+	if (200 != statuscode) {
+	    content = strdup("");
+	}
+	clen = strlen(content);
     } else {
         struct stat sbuf;
         int fd = -1;

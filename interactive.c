@@ -559,3 +559,57 @@ void interactiveRemoveStaleAircrafts(void) {
 //
 //=========================================================================
 //
+// this is retryable
+//
+void redisInit(void) {
+    redisContext *context = redisConnect("127.0.0.1", 6379);
+
+    if (NULL == context) {
+	printf("REDIS_ERR: can't allocate redis context\n");
+    } else if (context->err) {
+	printf("REDIS_ERR: %s\n", context->errstr);
+	redisFree(context);
+    } else {
+	printf("REDIS: connected\n");
+	Modes.redis_context = context;
+    }
+}
+//
+//=========================================================================
+//
+void interactiveUpdateRedis(void) {
+    time_t now = time(NULL);
+    redisContext *context = Modes.redis_context;
+    redisReply *reply = NULL;
+    char *json;
+    int len;
+
+    // Only save to database once per second
+    if (Modes.last_cleanup_time == now) {
+	return; // nothing to do.  stale aircraft reaper handles last_cleanup_time.
+    }
+
+    if (context) {
+	// store JSON string for render speed and data model simplicity
+	if (!(json = aircraftsToJson(&len))) {
+	    return;
+	}
+	reply = redisCommand(context, "XADD %s %d %d %b", STREAM_NAME, now, now, json, (size_t) len);
+	free(json);
+	if (reply) {
+	    freeReplyObject(reply);
+	} else {
+	    printf("REDIS_ERR: %s\n", context->errstr);
+	    redisFree(context);
+	    Modes.redis_context = NULL;
+	    return;
+	}
+	// hourly XTRIM
+	if (0 == (now % 3600)) {
+	    (void) redisCommand(context, "XTRIM %s MAXLEN ~ %d", STREAM_NAME, 3600 * 24 /*hours to keep*/);
+	}
+    } else if (0 == (now % 60)) {
+	// try to reconnect every minute
+	redisInit();
+    }
+}
