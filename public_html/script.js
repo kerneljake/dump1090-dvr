@@ -449,46 +449,46 @@ function refreshTableInfo() {
 			html += '<td>' + tableplane.icao + '</td>';
 			html += '<td>' + tableplane.flight + '</td>';
 			if (tableplane.squawk != '0000' ) {
-    			html += '<td align="right">' + tableplane.squawk + '</td>';
-    	    } else {
-    	        html += '<td align="right">&nbsp;</td>';
-    	    }
+			    html += '<td align="right">' + tableplane.squawk + '</td>';
+			} else {
+			    html += '<td align="right">&nbsp;</td>';
+			}
     	    
-    	    if (Metric) {
-    			html += '<td align="right">' + Math.round(tableplane.altitude / 3.2828) + '</td>';
-    			html += '<td align="right">' + Math.round(tableplane.speed * 1.852) + '</td>';
-    	    } else {
-    	        html += '<td align="right">' + tableplane.altitude + '</td>';
-    	        html += '<td align="right">' + tableplane.speed + '</td>';
-    	    }
+			if (Metric) {
+			    html += '<td align="right">' + Math.round(tableplane.altitude / 3.2828) + '</td>';
+			    html += '<td align="right">' + Math.round(tableplane.speed * 1.852) + '</td>';
+			} else {
+			    html += '<td align="right">' + tableplane.altitude + '</td>';
+			    html += '<td align="right">' + tableplane.speed + '</td>';
+			}
                         // Add distance column to table if site coordinates are provided
                         if (SiteShow && (typeof SiteLat !==  'undefined' || typeof SiteLon !==  'undefined')) {
-                        html += '<td align="right">';
+			    html += '<td align="right">';
                             if (tableplane.vPosition) {
                                 var siteLatLon  = new google.maps.LatLng(SiteLat, SiteLon);
                                 var planeLatLon = new google.maps.LatLng(tableplane.latitude, tableplane.longitude);
                                 var dist = google.maps.geometry.spherical.computeDistanceBetween (siteLatLon, planeLatLon);
-                                    if (Metric) {
-                                        dist /= 1000;
-                                    } else {
-                                        dist /= 1852;
-                                    }
+				if (Metric) {
+				    dist /= 1000;
+				} else {
+				    dist /= 1852;
+				}
                                 dist = (Math.round((dist)*10)/10).toFixed(1);
                                 html += dist;
                             } else {
-                            html += '0';
+				html += '0';
                             }
                             html += '</td>';
                         }
 			
 			html += '<td align="right">';
 			if (tableplane.vTrack) {
-    			 html += normalizeTrack(tableplane.track, tableplane.vTrack)[2];
+			    html += normalizeTrack(tableplane.track, tableplane.vTrack)[2];
     			 // html += ' (' + normalizeTrack(tableplane.track, tableplane.vTrack)[1] + ')';
-    	    } else {
-    	        html += '&nbsp;';
-    	    }
-    	    html += '</td>';
+			} else {
+			    html += '&nbsp;';
+			}
+			html += '</td>';
 			html += '<td align="right">' + tableplane.messages + '</td>';
 			html += '<td align="right">' + tableplane.seen + '</td>';
 			html += '</tr>';
