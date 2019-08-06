@@ -27,29 +27,29 @@ function fetchData() {
 		
 		// Loop through all the planes in the data packet
 		for (var j=0; j < data.length; j++) {
-			// Do we already have this plane object in Planes?
-			// If not make it.
-			if (Planes[data[j].hex]) {
-				var plane = Planes[data[j].hex];
-			} else {
-				var plane = jQuery.extend(true, {}, planeObject);
-			}
+		    // Do we already have this plane object in Planes?
+		    // If not make it.
+		    if (Planes[data[j].hex]) {
+			var plane = Planes[data[j].hex];
+		    } else {
+			var plane = jQuery.extend(true, {}, planeObject);
+		    }
 			
-			/* For special squawk tests
-			if (data[j].hex == '48413x') {
-            	data[j].squawk = '7700';
-            } //*/
+		    /* For special squawk tests
+		       if (data[j].hex == '48413x') {
+		       data[j].squawk = '7700';
+		       } //*/
             
-            // Set SpecialSquawk-value
-            if (data[j].squawk == '7500' || data[j].squawk == '7600' || data[j].squawk == '7700') {
-                SpecialSquawk = true;
-            }
+		    // Set SpecialSquawk-value
+		    if (data[j].squawk == '7500' || data[j].squawk == '7600' || data[j].squawk == '7700') {
+			SpecialSquawk = true;
+		    }
 
-			// Call the function update
-			plane.funcUpdateData(data[j]);
+		    // Call the function update
+		    plane.funcUpdateData(data[j]);
 			
-			// Copy the plane into Planes
-			Planes[plane.icao] = plane;
+		    // Copy the plane into Planes
+		    Planes[plane.icao] = plane;
 		}
 
 		PlanesOnTable = data.length;
@@ -151,53 +151,53 @@ function initialize() {
 
 	//Define OSM map type pointing at the OpenStreetMap tile server
 	GoogleMap.mapTypes.set("OSM", new google.maps.ImageMapType({
-		getTileUrl: function(coord, zoom) {
+		    getTileUrl: function(coord, zoom) {
 			return "http://tile.openstreetmap.org/" + zoom + "/" + coord.x + "/" + coord.y + ".png";
-		},
-		tileSize: new google.maps.Size(256, 256),
-		name: "OpenStreetMap",
-		maxZoom: 18
-	}));
+		    },
+			tileSize: new google.maps.Size(256, 256),
+			name: "OpenStreetMap",
+			maxZoom: 18
+			}));
 
 	GoogleMap.mapTypes.set("dark_map", styledMap);
 	
 	// Listeners for newly created Map
-    google.maps.event.addListener(GoogleMap, 'center_changed', function() {
-        localStorage['CenterLat'] = GoogleMap.getCenter().lat();
-        localStorage['CenterLon'] = GoogleMap.getCenter().lng();
-    });
+	google.maps.event.addListener(GoogleMap, 'center_changed', function() {
+		localStorage['CenterLat'] = GoogleMap.getCenter().lat();
+		localStorage['CenterLon'] = GoogleMap.getCenter().lng();
+	    });
     
-    google.maps.event.addListener(GoogleMap, 'zoom_changed', function() {
-        localStorage['ZoomLvl']  = GoogleMap.getZoom();
-    }); 
+	google.maps.event.addListener(GoogleMap, 'zoom_changed', function() {
+		localStorage['ZoomLvl']  = GoogleMap.getZoom();
+	    }); 
 	
 	// Add home marker if requested
 	if (SiteShow && (typeof SiteLat !==  'undefined' || typeof SiteLon !==  'undefined')) {
 	    var siteMarker  = new google.maps.LatLng(SiteLat, SiteLon);
 	    var markerImage = new google.maps.MarkerImage(
-	        'http://maps.google.com/mapfiles/kml/pal4/icon57.png',
-            new google.maps.Size(32, 32),   // Image size
-            new google.maps.Point(0, 0),    // Origin point of image
-            new google.maps.Point(16, 16)); // Position where marker should point 
+							  'http://maps.google.com/mapfiles/kml/pal4/icon57.png',
+							  new google.maps.Size(32, 32),   // Image size
+							  new google.maps.Point(0, 0),    // Origin point of image
+							  new google.maps.Point(16, 16)); // Position where marker should point 
 	    var marker = new google.maps.Marker({
-          position: siteMarker,
-          map: GoogleMap,
-          icon: markerImage,
-          title: 'My Radar Site',
-          zIndex: -99999
-        });
+		    position: siteMarker,
+		    map: GoogleMap,
+		    icon: markerImage,
+		    title: 'My Radar Site',
+		    zIndex: -99999
+		});
         
-        if (SiteCircles) {
-            for (var i=0;i<SiteCirclesDistances.length;i++) {
-              drawCircle(marker, SiteCirclesDistances[i]); // in meters
-            }
-        }
+	    if (SiteCircles) {
+		for (var i=0;i<SiteCirclesDistances.length;i++) {
+		    drawCircle(marker, SiteCirclesDistances[i]); // in meters
+		}
+	    }
 	}
 	
 	// These will run after page is complitely loaded
 	$(window).load(function() {
-        $('#dialog-modal').css('display', 'inline'); // Show hidden settings-windows content
-    });
+		$('#dialog-modal').css('display', 'inline'); // Show hidden settings-windows content
+	    });
 
 	// Load up our options page
 	optionsInitalize();
@@ -212,7 +212,7 @@ function initialize() {
 		refreshSelected();
 		reaper();
 		extendedPulse();
-	}, 1000);
+	    }, 1000);
 }
 
 // This looks for planes to reap out of the master Planes variable
@@ -239,47 +239,47 @@ function reaper() {
 // Refresh the detail window about the plane
 function refreshSelected() {
     var selected = false;
-	if (typeof SelectedPlane !== 'undefined' && SelectedPlane != "ICAO" && SelectedPlane != null) {
+    if (typeof SelectedPlane !== 'undefined' && SelectedPlane != "ICAO" && SelectedPlane != null) {
     	selected = Planes[SelectedPlane];
     }
 	
-	var columns = 2;
-	var html = '';
+    var columns = 2;
+    var html = '';
 	
-	if (selected) {
+    if (selected) {
     	html += '<table id="selectedinfo" width="100%">';
     } else {
         html += '<table id="selectedinfo" class="dim" width="100%">';
     }
 	
-	// Flight header line including squawk if needed
-	if (selected && selected.flight == "") {
-	    html += '<tr><td colspan="' + columns + '" id="selectedinfotitle"><b>N/A (' +
-	        selected.icao + ')</b>';
-	} else if (selected && selected.flight != "") {
-	    html += '<tr><td colspan="' + columns + '" id="selectedinfotitle"><b>' +
-	        selected.flight + '</b>';
-	} else {
-	    html += '<tr><td colspan="' + columns + '" id="selectedinfotitle"><b>DUMP1090</b>';
-	}
+    // Flight header line including squawk if needed
+    if (selected && selected.flight == "") {
+	html += '<tr><td colspan="' + columns + '" id="selectedinfotitle"><b>N/A (' +
+	    selected.icao + ')</b>';
+    } else if (selected && selected.flight != "") {
+	html += '<tr><td colspan="' + columns + '" id="selectedinfotitle"><b>' +
+	    selected.flight + '</b>';
+    } else {
+	html += '<tr><td colspan="' + columns + '" id="selectedinfotitle"><b>DUMP1090</b>';
+    }
 	
-	if (selected && selected.squawk == 7500) { // Lets hope we never see this... Aircraft Hijacking
-		html += '&nbsp;<span class="squawk7500">&nbsp;Squawking: Aircraft Hijacking&nbsp;</span>';
-	} else if (selected && selected.squawk == 7600) { // Radio Failure
-		html += '&nbsp;<span class="squawk7600">&nbsp;Squawking: Radio Failure&nbsp;</span>';
-	} else if (selected && selected.squawk == 7700) { // General Emergency
-		html += '&nbsp;<span class="squawk7700">&nbsp;Squawking: General Emergency&nbsp;</span>';
-	} else if (selected && selected.flight != '') {
-		html += '&nbsp;<a href="http://fr24.com/'+selected.flight+'" target="_blank">[FR24]</a>';
-	    html += '&nbsp;<a href="http://www.flightstats.com/go/FlightStatus/flightStatusByFlight.do?';
+    if (selected && selected.squawk == 7500) { // Lets hope we never see this... Aircraft Hijacking
+	html += '&nbsp;<span class="squawk7500">&nbsp;Squawking: Aircraft Hijacking&nbsp;</span>';
+    } else if (selected && selected.squawk == 7600) { // Radio Failure
+	html += '&nbsp;<span class="squawk7600">&nbsp;Squawking: Radio Failure&nbsp;</span>';
+    } else if (selected && selected.squawk == 7700) { // General Emergency
+	html += '&nbsp;<span class="squawk7700">&nbsp;Squawking: General Emergency&nbsp;</span>';
+    } else if (selected && selected.flight != '') {
+	html += '&nbsp;<a href="http://fr24.com/'+selected.flight+'" target="_blank">[FR24]</a>';
+	html += '&nbsp;<a href="http://www.flightstats.com/go/FlightStatus/flightStatusByFlight.do?';
         html += 'flightNumber='+selected.flight+'" target="_blank">[FlightStats]</a>';
-	    html += '&nbsp;<a href="http://flightaware.com/live/flight/'+selected.flight+'" target="_blank">[FlightAware]</a>';
-	}
-	html += '<td></tr>';
+	html += '&nbsp;<a href="http://flightaware.com/live/flight/'+selected.flight+'" target="_blank">[FlightAware]</a>';
+    }
+    html += '<td></tr>';
 	
-	if (selected) {
-	    if (Metric) {
-        	html += '<tr><td>Altitude: ' + Math.round(selected.altitude / 3.2828) + ' m</td>';
+    if (selected) {
+	if (Metric) {
+	    html += '<tr><td>Altitude: ' + Math.round(selected.altitude / 3.2828) + ' m</td>';
         } else {
             html += '<tr><td>Altitude: ' + selected.altitude + ' ft</td>';
         }
@@ -287,13 +287,13 @@ function refreshSelected() {
         html += '<tr><td>Altitude: n/a</td>';
     }
 		
-	if (selected && selected.squawk != '0000') {
-		html += '<td>Squawk: ' + selected.squawk + '</td></tr>';
-	} else {
-	    html += '<td>Squawk: n/a</td></tr>';
-	}
+    if (selected && selected.squawk != '0000') {
+	html += '<td>Squawk: ' + selected.squawk + '</td></tr>';
+    } else {
+	html += '<td>Squawk: n/a</td></tr>';
+    }
 	
-	html += '<tr><td>Speed: ' 
+    html += '<tr><td>Speed: ' 
 	if (selected) {
 	    if (Metric) {
 	        html += Math.round(selected.speed * 1.852) + ' km/h';
@@ -303,9 +303,9 @@ function refreshSelected() {
 	} else {
 	    html += 'n/a';
 	}
-	html += '</td>';
+    html += '</td>';
 	
-	if (selected) {
+    if (selected) {
         html += '<td>ICAO (hex): ' + selected.icao + '</td></tr>';
     } else {
         html += '<td>ICAO (hex): n/a</td></tr>'; // Something is wrong if we are here
@@ -317,14 +317,14 @@ function refreshSelected() {
 	} else {
 	    html += 'n/a';
 	}
-	html += '</td><td>&nbsp;</td></tr>';
+    html += '</td><td>&nbsp;</td></tr>';
 
-	html += '<tr><td colspan="' + columns + '" align="center">Lat/Long: ';
-	if (selected && selected.vPosition) {
-	    html += selected.latitude + ', ' + selected.longitude + '</td></tr>';
+    html += '<tr><td colspan="' + columns + '" align="center">Lat/Long: ';
+    if (selected && selected.vPosition) {
+	html += selected.latitude + ', ' + selected.longitude + '</td></tr>';
 	    
-	    // Let's show some extra data if we have site coordinates
-	    if (SiteShow) {
+	// Let's show some extra data if we have site coordinates
+	if (SiteShow) {
             var siteLatLon  = new google.maps.LatLng(SiteLat, SiteLon);
             var planeLatLon = new google.maps.LatLng(selected.latitude, selected.longitude);
             var dist = google.maps.geometry.spherical.computeDistanceBetween (siteLatLon, planeLatLon);
@@ -338,18 +338,18 @@ function refreshSelected() {
             html += '<tr><td colspan="' + columns + '" align="center">Distance from Site: ' + dist +
                 (Metric ? ' km' : ' NM') + '</td></tr>';
         } // End of SiteShow
+    } else {
+	if (SiteShow) {
+	    html += '<tr><td colspan="' + columns + '" align="center">Distance from Site: n/a ' + 
+		(Metric ? ' km' : ' NM') + '</td></tr>';
 	} else {
-	    if (SiteShow) {
-	        html += '<tr><td colspan="' + columns + '" align="center">Distance from Site: n/a ' + 
-	            (Metric ? ' km' : ' NM') + '</td></tr>';
-	    } else {
     	    html += 'n/a</td></tr>';
     	}
-	}
+    }
 
-	html += '</table>';
+    html += '</table>';
 	
-	document.getElementById('plane_detail').innerHTML = html;
+    document.getElementById('plane_detail').innerHTML = html;
 }
 
 // Right now we have no means to validate the speed is good
@@ -444,7 +444,7 @@ function refreshTableInfo() {
 				html += '<tr class="plane_table_row vPosition' + specialStyle + '">';
 			} else {
 				html += '<tr class="plane_table_row ' + specialStyle + '">';
-		    }
+			}
 		    
 			html += '<td>' + tableplane.icao + '</td>';
 			html += '<td>' + tableplane.flight + '</td>';
@@ -499,20 +499,20 @@ function refreshTableInfo() {
 	document.getElementById('planes_table').innerHTML = html;
 
 	if (SpecialSquawk) {
-    	$('#SpecialSquawkWarning').css('display', 'inline');
-    } else {
-        $('#SpecialSquawkWarning').css('display', 'none');
-    }
+	    $('#SpecialSquawkWarning').css('display', 'inline');
+	} else {
+	    $('#SpecialSquawkWarning').css('display', 'none');
+	}
 
 	// Click event for table
 	$('#planes_table').find('tr').click( function(){
 		var hex = $(this).find('td:first').text();
 		if (hex != "ICAO") {
-			selectPlaneByHex(hex);
-			refreshTableInfo();
-			refreshSelected();
+		    selectPlaneByHex(hex);
+		    refreshTableInfo();
+		    refreshSelected();
 		}
-	});
+	    });
 
 	sortTable("tableinfo");
 }
@@ -546,7 +546,7 @@ function sortTable(szTableID,iCol) {
 	//If supplied col # is greater than the actual number of cols, set sel col = to last col
 	if (typeof oTbl.rows[0] !== 'undefined' && oTbl.rows[0].cells.length <= iCol) {
 		iCol=(oTbl.rows[0].cells.length-1);
-    }
+	}
 
 	//store the col #
 	iSortCol=iCol;
@@ -573,7 +573,7 @@ function sortTable(szTableID,iCol) {
 		aStore.sort();
 		if(!bSortASC) {
 			aStore.reverse();
-	    }
+		}
 	}
 
 	//rewrite the table rows to the passed table element
@@ -624,15 +624,15 @@ function resetMap() {
     ZoomLvl   = Number(localStorage['ZoomLvl']) || CONST_ZOOMLVL;
     
     // Set and refresh
-	GoogleMap.setZoom(parseInt(ZoomLvl));
-	GoogleMap.setCenter(new google.maps.LatLng(parseFloat(CenterLat), parseFloat(CenterLon)));
+    GoogleMap.setZoom(parseInt(ZoomLvl));
+    GoogleMap.setCenter(new google.maps.LatLng(parseFloat(CenterLat), parseFloat(CenterLon)));
 	
-	if (SelectedPlane) {
-	    selectPlaneByHex(SelectedPlane);
-	}
+    if (SelectedPlane) {
+	selectPlaneByHex(SelectedPlane);
+    }
 
-	refreshSelected();
-	refreshTableInfo();
+    refreshSelected();
+    refreshTableInfo();
 }
 
 function drawCircle(marker, distance) {
