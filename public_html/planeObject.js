@@ -177,7 +177,7 @@ var planeObject = {
 			if ((data.validposition == 1) && (this.reapable == false)) {
 				this.vPosition = true;
 
-				// Detech if the plane has moved
+				// Detect if the plane has moved
 				changeLat = false;
 				changeLon = false;
 				changeAlt = false;
@@ -232,9 +232,11 @@ var planeObject = {
 
 			// Setting the marker title
 			if (this.flight.length == 0) {
-				this.marker.setTitle(this.hex);
+			    this.marker.setLabel({text: this.icao, fontWeight: "bold"});
+			    this.marker.setTitle(this.icao);
 			} else {
-				this.marker.setTitle(this.flight+' ('+this.icao+')');
+			    this.marker.setLabel({text: this.flight, fontWeight: "bold"});
+			    this.marker.setTitle(this.flight+' ('+this.icao+')');
 			}
 			return this.marker;
 		},

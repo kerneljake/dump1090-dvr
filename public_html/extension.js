@@ -10,8 +10,11 @@
 // -----------------------------------------------------
 
 function extendedInitalize() {
-	// Write your initalization here
-	// Gets called just before the 1-sec function call loop is setup
+    // Write your initalization here
+    // Gets called just before the 1-sec function call loop is setup
+
+    // larger, faster tooltips, but it's difficult to co-exist with browser's default tooltip
+    $(document).tooltip({show: null, track: true});
 }
 
 function extendedPulse() {
