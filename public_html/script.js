@@ -15,45 +15,56 @@ var bSortASC=true;
 var bDefaultSortASC=true;
 var iDefaultSortCol=3;
 
+var intervalID = null; // returned from setInterval()
+var intervalDuration = 1000; // milliseconds
+var head = 0; // playback head location in seconds; zero means "live"
+
 // Get current map settings
 CenterLat = Number(localStorage['CenterLat']) || CONST_CENTERLAT;
 CenterLon = Number(localStorage['CenterLon']) || CONST_CENTERLON;
 ZoomLvl   = Number(localStorage['ZoomLvl']) || CONST_ZOOMLVL;
 
 function fetchData() {
-	$.getJSON('/dump1090/data.json', function(data) {
-		PlanesOnMap = 0
-		SpecialSquawk = false;
+    if (0 == head) {
+	$.getJSON('/dump1090/data.json', parseData); // live
+    } else {
+	$.getJSON('/dump1090/second.json/' + head.toString(), parseData); // past
+    }
+}
+
+function parseData(data) {
+    PlanesOnMap = 0;
+    SpecialSquawk = false;
 		
-		// Loop through all the planes in the data packet
-		for (var j=0; j < data.length; j++) {
-		    // Do we already have this plane object in Planes?
-		    // If not make it.
-		    if (Planes[data[j].hex]) {
-			var plane = Planes[data[j].hex];
-		    } else {
-			var plane = jQuery.extend(true, {}, planeObject);
-		    }
+    // Loop through all the planes in the data packet
+    for (var j=0; j < data.length; j++) {
+	// Do we already have this plane object in Planes?
+	// If not make it.
+	if (Planes[data[j].hex]) {
+	    var plane = Planes[data[j].hex];
+	} else {
+	    var plane = jQuery.extend(true, {}, planeObject);
+	}
 			
-		    /* For special squawk tests
-		       if (data[j].hex == '48413x') {
-		       data[j].squawk = '7700';
-		       } //*/
+	/* For special squawk tests
+	   if (data[j].hex == '48413x') {
+	   data[j].squawk = '7700';
+	   } //*/
             
-		    // Set SpecialSquawk-value
-		    if (data[j].squawk == '7500' || data[j].squawk == '7600' || data[j].squawk == '7700') {
-			SpecialSquawk = true;
-		    }
+	// Set SpecialSquawk-value
+	if (data[j].squawk == '7500' || data[j].squawk == '7600' || data[j].squawk == '7700') {
+	    SpecialSquawk = true;
+	}
 
-		    // Call the function update
-		    plane.funcUpdateData(data[j]);
+	// Call the function update
+	plane.funcUpdateData(data[j]);
 			
-		    // Copy the plane into Planes
-		    Planes[plane.icao] = plane;
-		}
+	// Copy the plane into Planes
+	Planes[plane.icao] = plane;
+    }
 
-		PlanesOnTable = data.length;
-	});
+    PlanesOnTable = data.length;
+    data = null; // free up for garbage collection
 }
 
 // Initalizes the map and starts up our timers to call various functions
@@ -206,13 +217,16 @@ function initialize() {
 	extendedInitalize();
 	
 	// Setup our timer to poll from the server.
-	window.setInterval(function() {
-		fetchData();
-		refreshTableInfo();
-		refreshSelected();
-		reaper();
-		extendedPulse();
-	    }, 1000);
+	intervalID = window.setInterval(eventLoop, intervalDuration);
+}
+
+// main event poller
+function eventLoop() {
+        fetchData();
+	refreshTableInfo();
+	refreshSelected();
+	reaper();
+	extendedPulse();
 }
 
 // This looks for planes to reap out of the master Planes variable

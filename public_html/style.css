@@ -31,3 +31,4 @@ table#optionsTabs { width: 100%; font-size: small; font-family: monospace; backg
 
 .pointer { cursor: pointer; }
 
+.button { border-radius: 4px; border-style: 1px solid #34c1e5; background: transparent; }
