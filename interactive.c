@@ -594,8 +594,14 @@ void interactiveUpdateRedis(void) {
 	if (!(json = aircraftsToJson(&len))) {
 	    return;
 	}
-	reply = redisCommand(context, "XADD %s %d %d %b", STREAM_NAME, now, now, json, (size_t) len);
+	size_t compressed_len = snappy_max_compressed_length(len);
+	char* compressed_json = (char*)malloc(compressed_len);
+	if (snappy_compress(json, len, compressed_json, &compressed_len) !=  SNAPPY_OK) {
+	    return;
+	}
+	reply = redisCommand(context, "XADD %s %d %d %b", STREAM_NAME, now, now, compressed_json, (size_t) compressed_len);
 	free(json);
+	free(compressed_json);
 	if (reply) {
 	    freeReplyObject(reply);
 	} else {
