@@ -10,7 +10,7 @@
 // -----------------------------------------------------
 
 var playBtn, liveBtn, thirtySecBtn, fiveMinBtn, oneHourBtn;
-var timesOneBtn, timesTwoBtn, timesFiveBtn;
+var timesOneBtn, timesTwoBtn, timesFiveBtn, timesTenBtn;
 var paused = false;
 
 const buttonPressedColor = '#1E90FF';
@@ -41,6 +41,7 @@ function extendedInitalize() {
 	'<button class="button" id="timesOneBtn">x1</button>' + '&nbsp;' + '&nbsp;' +
 	'<button class="button" id="timesTwoBtn">x2</button>' + '&nbsp;' + '&nbsp;' +
 	'<button class="button" id="timesFiveBtn">x5</button>' + '&nbsp;' + '&nbsp;' +
+	'<button class="button" id="timesTenBtn">x10</button>' + '&nbsp;' + '&nbsp;' +
 	'';
     html += '<div id="head_position"></div>';
     document.getElementById('plane_extension').innerHTML = html;
@@ -118,6 +119,7 @@ function extendedInitalize() {
 		$(this).animate(cssBtnOn, 200);
 		$('#timesTwoBtn').animate(cssBtnOff, 200);
 		$('#timesFiveBtn').animate(cssBtnOff, 200);
+		$('#timesTenBtn').animate(cssBtnOff, 200);
 	    }
 	});
 
@@ -129,6 +131,7 @@ function extendedInitalize() {
 		$('#timesOneBtn').animate(cssBtnOff, 200);
 		$(this).animate(cssBtnOn, 200);
 		$('#timesFiveBtn').animate(cssBtnOff, 200);
+		$('#timesTenBtn').animate(cssBtnOff, 200);
 	    }
 	});
 
@@ -139,6 +142,19 @@ function extendedInitalize() {
 	    if (head > 0) {
 		$('#timesOneBtn').animate(cssBtnOff, 200);
 		$('#timesTwoBtn').animate(cssBtnOff, 200);
+		$(this).animate(cssBtnOn, 200);
+		$('#timesTenBtn').animate(cssBtnOff, 200);
+	    }
+	});
+
+    // times ten playback speed
+    timesTenBtn = document.getElementById('timesTenBtn');
+    timesTenBtn.addEventListener("click", speedChange.bind(this, 100));
+    $('#timesTenBtn').click(function() {
+	    if (head > 0) {
+		$('#timesOneBtn').animate(cssBtnOff, 200);
+		$('#timesTwoBtn').animate(cssBtnOff, 200);
+		$('#timesFiveBtn').animate(cssBtnOff, 200);
 		$(this).animate(cssBtnOn, 200);
 	    }
 	});
@@ -178,6 +194,7 @@ function liveButtonsReset() {
     $('#timesOneBtn').animate({backgroundColor: buttonUnpressedColor, color: textNormal}, 200);
     $('#timesTwoBtn').animate({backgroundColor: buttonUnpressedColor, color: textNormal}, 200);
     $('#timesFiveBtn').animate({backgroundColor: buttonUnpressedColor, color: textNormal}, 200);
+    $('#timesTenBtn').animate({backgroundColor: buttonUnpressedColor, color: textNormal}, 200);
 }
 
 function extendedPulse() {
