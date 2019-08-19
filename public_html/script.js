@@ -65,6 +65,7 @@ function parseData(data) {
 
     PlanesOnTable = data.length;
     data = null; // free up for garbage collection
+    plane = null;
 }
 
 // Initalizes the map and starts up our timers to call various functions
