@@ -1,4 +1,4 @@
-Dump1090 README
+Dump1089 README
 ===
 
 Dump 1090 is a Mode S decoder specifically designed for RTLSDR devices.
