@@ -1,3 +1,21 @@
+![screenshot](https://github.com/kerneljake/dump1090-dvr/blob/master/screenshot.png)
+
+
+dump1090-dvr
+===
+
+This fork adds DVR-like capability to dump1090 by storing [ADSB](https://en.wikipedia.org/wiki/Transponder_(aeronautics))
+history in a Redis stream.  It allows you to pause, rewind, and fast-forward the most recent 24 hours of events.
+Run Redis on localhost, and then start dump1090 with the following command:
+
+    ./dump1090 --interactive --net --fix
+
+The web interface is exposed on port 8080.
+
+You will need to put your Google Maps API key in config.js:
+
+    google_maps_api_key = "supersecretstring";
+
 Dump1089 README
 ===
 
