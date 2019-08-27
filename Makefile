@@ -13,8 +13,14 @@ endif
 CFLAGS=-O2 -g -Wall -W `pkg-config --cflags librtlsdr`
 LIBS=`pkg-config --libs librtlsdr` -lpthread -lm -lhiredis -lsnappy
 INC=-I/usr/local/include
-CC=gcc
 
+UNAME := $(shell uname)
+ifeq ($(UNAME), FreeBSD)
+	LIBS := $(LIBS) -lcompat -lstdc++
+	CC=cc
+else
+	CC=gcc
+endif
 
 all: dump1090 view1090
 
