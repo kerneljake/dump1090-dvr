@@ -32,7 +32,8 @@ function extendedInitalize() {
     //$(document).tooltip({show: null, track: true});
 
     // playback buttons begin here
-    var html = '<button class="button" id="playpausebtn">PAUSE</button>' + '&nbsp;' +
+    var html = '<div id="head_position"></div>';
+    html += '<button class="button" id="playpausebtn">PAUSE</button>' + '&nbsp;' +
 	'<button class="button" id="thirtySecBtn">&lt;&lt; 30 SEC</button>' + '&nbsp;' +
 	'<button class="button" id="fiveMinBtn">&lt;&lt; 5 MIN</button>' + '&nbsp;' +
 	'<button class="button" id="oneHourBtn">&lt;&lt; 1 HR</button>' + '&nbsp;' +
@@ -43,7 +44,6 @@ function extendedInitalize() {
 	'<button class="button" id="timesFiveBtn">x5</button>' + '&nbsp;' + '&nbsp;' +
 	'<button class="button" id="timesTenBtn">x10</button>' + '&nbsp;' + '&nbsp;' +
 	'';
-    html += '<div id="head_position"></div>';
     document.getElementById('plane_extension').innerHTML = html;
 
     $('#liveBtn').animate(cssBtnOn, 200); // start out as live
