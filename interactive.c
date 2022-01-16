@@ -29,6 +29,8 @@
 //
 
 #include "dump1090.h"
+
+struct sModes Modes;
 //
 // ============================= Utility functions ==========================
 //
