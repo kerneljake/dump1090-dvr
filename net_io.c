@@ -774,18 +774,8 @@ int handleHTTPRequest(struct client *c, char *p) {
 	    if (reply) {
 		if ((REDIS_REPLY_ARRAY == reply->type) && (reply->elements > 0) && 
 		    (reply->element[0]->elements > 1) && (reply->element[0]->element[1]->elements > 1)) {
-		    const char *compressed_json = reply->element[0]->element[1]->element[1]->str;
-		    const int compressed_len = reply->element[0]->element[1]->element[1]->len;
-		    size_t uncompressed_len;
-		    if (snappy_uncompressed_length(compressed_json, compressed_len, &uncompressed_len)
-			== SNAPPY_OK) {
-			content = (char *)malloc(uncompressed_len + 1 /* for \0 terminator */);
-			if (snappy_uncompress(compressed_json, compressed_len, content, &uncompressed_len)
-			    == SNAPPY_OK) {
-			    statuscode = 200;
-			    content[uncompressed_len] = '\0';
-			}
-		    }
+		    content = strdup(reply->element[0]->element[1]->element[1]->str);
+		    statuscode = 200;
 		} else {
 		    statuscode = 404;
 		}

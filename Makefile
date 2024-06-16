@@ -11,7 +11,7 @@ EXTRACFLAGS=-DHTMLPATH=\"$(SHAREDIR)\"
 endif
 
 CFLAGS=-O2 -g -Wall -W `pkg-config --cflags librtlsdr`
-LIBS=`pkg-config --libs librtlsdr` -lpthread -lm -lhiredis -lsnappy
+LIBS=`pkg-config --libs librtlsdr` -lpthread -lm -lhiredis
 INC=-I/usr/local/include
 
 UNAME := $(shell uname)

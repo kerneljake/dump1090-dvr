@@ -60,7 +60,6 @@
     #include "rtl-sdr.h"
     #include "anet.h"
     #include "hiredis/hiredis.h"
-    #include "snappy-c.h"
 #else
     #include "winstubs.h" //Put everything Windows specific in here
     #include "rtl-sdr.h"
